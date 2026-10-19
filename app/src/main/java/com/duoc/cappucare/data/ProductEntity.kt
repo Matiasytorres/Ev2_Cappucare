@@ -13,14 +13,3 @@ data class ProductEntity(
     val location: String,
     val expiryDate: String
 )
-
-@Entity(tableName = "movements")
-data class MovementEntity(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val productSku: String,
-    val productName: String,
-    val type: String, // "INGRESO" o "VENTA"
-    val quantity: Int,
-    val timestamp: String,
-    val location: String
-)
