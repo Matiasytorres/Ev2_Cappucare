@@ -22,6 +22,7 @@ import com.duoc.cappucare.ui.screens.LoginScreen
 import com.duoc.cappucare.ui.screens.ProductDetailScreen
 import com.duoc.cappucare.ui.screens.ProfileScreen
 import com.duoc.cappucare.viewmodel.CappucareViewModel
+import com.duoc.cappucare.ui.screens.HistoryScreen
 
 object Routes {
     const val LOGIN = "login"
@@ -107,7 +108,13 @@ fun AppNavHost(viewModel: CappucareViewModel) {
             }
 
             composable(Routes.SCAN) { PlaceholderScreen("Escanear código") }
-            composable(Routes.HISTORY) { PlaceholderScreen("Historial") }
+            composable(Routes.HISTORY) {
+                HistoryScreen(
+                    products = products,
+                    movements = movements,
+                    onMovementClick = { sku -> navController.navigate(Routes.detail(sku)) }
+                )
+            }
 
             composable(
                 route = Routes.DETAIL,
