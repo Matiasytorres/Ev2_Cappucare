@@ -11,5 +11,10 @@ data class ProductEntity(
     val stock: Int,
     val minStock: Int,
     val location: String,
-    val expiryDate: String
+    val expiryDate: String,
+    val barcode: String = "",
+    val price: Int = 0,
+    val brand: String = "",
+    val unit: String = "Unidades",
+    val imageUri: String? = null
 )

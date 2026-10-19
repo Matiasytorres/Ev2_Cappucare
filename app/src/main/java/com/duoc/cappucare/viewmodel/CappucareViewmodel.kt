@@ -5,9 +5,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.room.withTransaction
 import com.duoc.cappucare.data.AppDatabase
+import com.duoc.cappucare.data.LotEntity
 import com.duoc.cappucare.data.MovementEntity
 import com.duoc.cappucare.data.MovementType
 import com.duoc.cappucare.data.ProductEntity
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -23,11 +25,30 @@ class CappucareViewModel(private val database: AppDatabase) : ViewModel() {
         // Datos de ejemplo: solo se cargan si la tabla está vacía
         viewModelScope.launch {
             if (dao.countProducts() == 0) {
-                dao.insertProduct(ProductEntity("MED-001", "Paracetamol 500 mg", "Fármacos", 5, 10, "Bodega A", "12/2026"))
-                dao.insertProduct(ProductEntity("MED-002", "Guantes de látex (caja)", "Insumos", 40, 15, "Bodega B", "03/2028"))
-                dao.insertProduct(ProductEntity("MED-003", "Jeringa 5 ml", "Insumos", 8, 20, "Bodega B", "08/2027"))
-                dao.insertProduct(ProductEntity("MED-004", "Alcohol gel 500 ml", "Higiene", 60, 25, "Bodega A", "01/2027"))
-                dao.insertProduct(ProductEntity("MED-005", "Mascarillas quirúrgicas", "Protección", 100, 50, "Bodega C", "06/2028"))
+                val samples = listOf(
+                    ProductEntity("CAP-MED-001", "Paracetamol 500 mg", "Fármacos", 5, 10, "Estante B-4", "12/2026",
+                        barcode = "7801234500011", price = 3500, brand = "Laboratorio Chile", unit = "Cajas"),
+                    ProductEntity("CAP-GUA-004", "Guantes de Nitrilo (Talla M)", "Desechables", 4, 15, "Estante B-1", "03/2028",
+                        barcode = "7801234500042", price = 8900, brand = "MedGlove", unit = "Cajas"),
+                    ProductEntity("CAP-MED-012", "Mascarilla Quirúrgica (KN95)", "Quirúrgicos", 150, 20, "Estante A-2", "08/2027",
+                        barcode = "9781882102775", price = 12500, brand = "ProtecMed", unit = "Cajas"),
+                    ProductEntity("CAP-ALC-088", "Gel 70% (1 Litro)", "Desechables", 28, 10, "Estante C-3", "01/2027",
+                        barcode = "7801234500888", price = 4200, brand = "HigiPlus", unit = "Botellas"),
+                    ProductEntity("CAP-JER-005", "Jeringa 5 ml", "Quirúrgicos", 8, 20, "Estante B-2", "06/2028",
+                        barcode = "7801234500055", price = 150, brand = "MedSafe", unit = "Unidades")
+                )
+                samples.forEach { p ->
+                    dao.insertProduct(p)
+                    dao.insertLot(
+                        LotEntity(
+                            productSku = p.sku,
+                            lotNumber = "2026A",
+                            expiryDate = p.expiryDate,
+                            quantity = p.stock,
+                            location = p.location
+                        )
+                    )
+                }
             }
         }
     }
@@ -41,6 +62,8 @@ class CappucareViewModel(private val database: AppDatabase) : ViewModel() {
     val movements: StateFlow<List<MovementEntity>> = dao.getAllMovements()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    fun lotsFor(sku: String): Flow<List<LotEntity>> = dao.getLotsByProduct(sku)
+
     // Mensaje para mostrar al usuario (éxito o error de validación)
     private val _message = MutableStateFlow<String?>(null)
     val message: StateFlow<String?> = _message.asStateFlow()
@@ -49,21 +72,34 @@ class CappucareViewModel(private val database: AppDatabase) : ViewModel() {
         _message.value = null
     }
 
-    fun addProduct(product: ProductEntity) {
+    fun addProduct(product: ProductEntity, lotNumber: String) {
         viewModelScope.launch {
             if (product.sku.isBlank() || product.name.isBlank()) {
-                _message.value = "SKU y nombre son obligatorios"
+                _message.value = "Código y nombre son obligatorios"
                 return@launch
             }
-            if (product.stock < 0 || product.minStock < 0) {
-                _message.value = "El stock no puede ser negativo"
+            if (product.stock < 0 || product.minStock < 0 || product.price < 0) {
+                _message.value = "Los valores no pueden ser negativos"
                 return@launch
             }
             if (dao.getProductBySku(product.sku) != null) {
-                _message.value = "Ya existe un producto con ese SKU"
+                _message.value = "Ya existe un producto con ese código"
                 return@launch
             }
-            dao.insertProduct(product)
+            database.withTransaction {
+                dao.insertProduct(product)
+                if (product.stock > 0) {
+                    dao.insertLot(
+                        LotEntity(
+                            productSku = product.sku,
+                            lotNumber = lotNumber.ifBlank { "S/L" },
+                            expiryDate = product.expiryDate,
+                            quantity = product.stock,
+                            location = product.location
+                        )
+                    )
+                }
+            }
             _message.value = "Producto registrado"
         }
     }

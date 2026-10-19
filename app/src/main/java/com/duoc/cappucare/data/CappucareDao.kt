@@ -24,6 +24,15 @@ interface CappucareDao {
     @Query("SELECT COUNT(*) FROM products")
     suspend fun countProducts(): Int
 
+    @Query("SELECT * FROM products WHERE barcode = :barcode OR sku = :barcode LIMIT 1")
+    suspend fun getProductByCode(barcode: String): ProductEntity?
+
+    @Query("SELECT * FROM lots WHERE productSku = :sku ORDER BY expiryDate")
+    fun getLotsByProduct(sku: String): Flow<List<LotEntity>>
+
+    @Insert
+    suspend fun insertLot(lot: LotEntity): Long
+
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertProduct(product: ProductEntity): Long
 
