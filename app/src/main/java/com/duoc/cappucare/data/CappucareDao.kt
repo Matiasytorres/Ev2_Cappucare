@@ -21,6 +21,9 @@ interface CappucareDao {
     @Query("SELECT * FROM products WHERE stock <= minStock ORDER BY name")
     fun getLowStockProducts(): Flow<List<ProductEntity>>
 
+    @Query("SELECT COUNT(*) FROM products")
+    suspend fun countProducts(): Int
+
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertProduct(product: ProductEntity): Long
 

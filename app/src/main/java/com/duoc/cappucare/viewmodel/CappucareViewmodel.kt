@@ -19,6 +19,19 @@ class CappucareViewModel(private val database: AppDatabase) : ViewModel() {
 
     private val dao = database.dao()
 
+    init {
+        // Datos de ejemplo: solo se cargan si la tabla está vacía
+        viewModelScope.launch {
+            if (dao.countProducts() == 0) {
+                dao.insertProduct(ProductEntity("MED-001", "Paracetamol 500 mg", "Fármacos", 5, 10, "Bodega A", "12/2026"))
+                dao.insertProduct(ProductEntity("MED-002", "Guantes de látex (caja)", "Insumos", 40, 15, "Bodega B", "03/2028"))
+                dao.insertProduct(ProductEntity("MED-003", "Jeringa 5 ml", "Insumos", 8, 20, "Bodega B", "08/2027"))
+                dao.insertProduct(ProductEntity("MED-004", "Alcohol gel 500 ml", "Higiene", 60, 25, "Bodega A", "01/2027"))
+                dao.insertProduct(ProductEntity("MED-005", "Mascarillas quirúrgicas", "Protección", 100, 50, "Bodega C", "06/2028"))
+            }
+        }
+    }
+
     val products: StateFlow<List<ProductEntity>> = dao.getAllProducts()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
