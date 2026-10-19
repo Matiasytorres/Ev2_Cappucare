@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.duoc.cappucare.ui.theme.BackgroundGray
@@ -31,7 +32,6 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Logo o Título de la App
         Text(
             text = "Cappucare",
             fontSize = 32.sp,
@@ -46,7 +46,6 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Campo de Correo
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
@@ -58,7 +57,6 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Campo de Contraseña
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
@@ -71,7 +69,6 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Botón de Inicio de Sesión
         Button(
             onClick = onLoginSuccess,
             modifier = Modifier
@@ -83,4 +80,10 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
             Text("Iniciar Sesión", fontSize = 16.sp, color = Color.White)
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoginScreenPreview() {
+    LoginScreen(onLoginSuccess = {})
 }

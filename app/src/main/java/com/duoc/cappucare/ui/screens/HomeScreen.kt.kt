@@ -2,8 +2,6 @@ package com.duoc.cappucare.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -13,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.duoc.cappucare.data.MovementEntity
@@ -34,7 +33,6 @@ fun HomeScreen(
             .background(BackgroundGray)
             .padding(16.dp)
     ) {
-        // Encabezado
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -49,7 +47,6 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Banner Alerta Stock Bajo
         if (lowStockList.isNotEmpty()) {
             Card(
                 colors = CardDefaults.cardColors(containerColor = AlertRed),
@@ -81,7 +78,6 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Tarjetas de Resumen
         Text("Resumen de inventario", fontWeight = FontWeight.Bold, fontSize = 16.sp)
         Spacer(modifier = Modifier.height(8.dp))
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -94,7 +90,6 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Accesos Rápidos
         Text("Accesos rápidos", fontWeight = FontWeight.Bold, fontSize = 16.sp)
         Spacer(modifier = Modifier.height(8.dp))
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -136,4 +131,20 @@ fun QuickActionButton(label: String, icon: androidx.compose.ui.graphics.vector.I
             Text(label, fontSize = 10.sp, color = Color.Black)
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HomeScreenPreview() {
+    val mockProducts = listOf(
+        ProductEntity("1", "Paracetamol", "Fármacos", 5, 10, "Bodega A", "12/2026")
+    )
+    HomeScreen(
+        products = mockProducts,
+        lowStockList = mockProducts,
+        movements = emptyList(),
+        onNavigateToScan = {},
+        onNavigateToAdd = {},
+        onNavigateToInventory = {}
+    )
 }
