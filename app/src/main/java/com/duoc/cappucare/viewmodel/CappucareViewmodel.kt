@@ -64,12 +64,18 @@ class CappucareViewModel(private val database: AppDatabase) : ViewModel() {
 
     fun lotsFor(sku: String): Flow<List<LotEntity>> = dao.getLotsByProduct(sku)
 
-    // Mensaje para mostrar al usuario (éxito o error de validación)
     private val _message = MutableStateFlow<String?>(null)
     val message: StateFlow<String?> = _message.asStateFlow()
 
     fun clearMessage() {
         _message.value = null
+    }
+
+    fun findProductByCode(code: String, onResult: (ProductEntity?) -> Unit) {
+        viewModelScope.launch {
+            val product = dao.getProductByCode(code)
+            onResult(product)
+        }
     }
 
     fun addProduct(product: ProductEntity, lotNumber: String) {
@@ -121,7 +127,6 @@ class CappucareViewModel(private val database: AppDatabase) : ViewModel() {
                 return@launch
             }
 
-            // Todo ocurre en una transacción: o se guarda el movimiento y el stock, o nada
             val error: String? = database.withTransaction {
                 val product = dao.getProductBySku(sku)
                     ?: return@withTransaction "Producto no encontrado"

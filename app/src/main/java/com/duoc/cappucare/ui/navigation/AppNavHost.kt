@@ -16,13 +16,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.duoc.cappucare.ui.screens.HistoryScreen
 import com.duoc.cappucare.ui.screens.HomeScreen
 import com.duoc.cappucare.ui.screens.InventoryScreen
 import com.duoc.cappucare.ui.screens.LoginScreen
 import com.duoc.cappucare.ui.screens.ProductDetailScreen
 import com.duoc.cappucare.ui.screens.ProfileScreen
+import com.duoc.cappucare.ui.screens.ScannerScreen
 import com.duoc.cappucare.viewmodel.CappucareViewModel
-import com.duoc.cappucare.ui.screens.HistoryScreen
 
 object Routes {
     const val LOGIN = "login"
@@ -36,13 +37,6 @@ object Routes {
 }
 
 @Composable
-private fun PlaceholderScreen(title: String) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("$title (próximamente)")
-    }
-}
-
-@Composable
 fun AppNavHost(viewModel: CappucareViewModel) {
     val navController = rememberNavController()
 
@@ -53,7 +47,6 @@ fun AppNavHost(viewModel: CappucareViewModel) {
 
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
-    // El detalle de producto cuenta como parte de Inventario
     val selectedRoute = if (currentRoute == Routes.DETAIL) Routes.INVENTORY else currentRoute
 
     fun navigateTab(route: String) {
@@ -94,7 +87,7 @@ fun AppNavHost(viewModel: CappucareViewModel) {
                     lowStockList = lowStock,
                     movements = movements,
                     onNavigateToScan = { navigateTab(Routes.SCAN) },
-                    onNavigateToAdd = { },
+                    onNavigateToAdd = { navigateTab(Routes.INVENTORY) },
                     onNavigateToInventory = { navigateTab(Routes.INVENTORY) }
                 )
             }
@@ -109,7 +102,22 @@ fun AppNavHost(viewModel: CappucareViewModel) {
                 )
             }
 
-            composable(Routes.SCAN) { PlaceholderScreen("Escanear código") }
+            composable(Routes.SCAN) {
+                ScannerScreen(
+                    onLookup = { code, onResult ->
+                        viewModel.findProductByCode(code) { product ->
+                            onResult(product)
+                        }
+                    },
+                    onProductFound = { sku ->
+                        navController.navigate(Routes.detail(sku))
+                    },
+                    onAddProduct = { code ->
+                        navigateTab(Routes.INVENTORY)
+                    }
+                )
+            }
+
             composable(Routes.HISTORY) {
                 HistoryScreen(
                     products = products,
