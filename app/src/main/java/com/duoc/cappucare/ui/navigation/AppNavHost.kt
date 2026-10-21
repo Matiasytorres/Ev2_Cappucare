@@ -103,7 +103,9 @@ fun AppNavHost(viewModel: CappucareViewModel) {
                 InventoryScreen(
                     products = products,
                     onProductClick = { sku -> navController.navigate(Routes.detail(sku)) },
-                    onBack = { navController.popBackStack() }
+                    onAddProduct = { },
+                    onRegisterSale = { sku -> navController.navigate(Routes.detail(sku)) },
+                    onRequestRestock = { sku -> navController.navigate(Routes.detail(sku)) }
                 )
             }
 
