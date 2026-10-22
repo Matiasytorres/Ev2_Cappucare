@@ -16,5 +16,8 @@ data class ProductEntity(
     val price: Int = 0,
     val brand: String = "",
     val unit: String = "Unidades",
-    val imageUri: String? = null
+    val imageUri: String? = null,
+    val indications: String = "",
+    val dosage: String = "",
+    val contraindications: String = ""
 )

@@ -22,7 +22,6 @@ class CappucareViewModel(private val database: AppDatabase) : ViewModel() {
     private val dao = database.dao()
 
     init {
-        // Datos de ejemplo: solo se cargan si la tabla está vacía
         viewModelScope.launch {
             if (dao.countProducts() == 0) {
                 val samples = listOf(
@@ -35,7 +34,13 @@ class CappucareViewModel(private val database: AppDatabase) : ViewModel() {
                     ProductEntity("CAP-ALC-088", "Gel 70% (1 Litro)", "Desechables", 28, 10, "Estante C-3", "01/2027",
                         barcode = "7801234500888", price = 4200, brand = "HigiPlus", unit = "Botellas"),
                     ProductEntity("CAP-JER-005", "Jeringa 5 ml", "Quirúrgicos", 8, 20, "Estante B-2", "06/2028",
-                        barcode = "7801234500055", price = 150, brand = "MedSafe", unit = "Unidades")
+                        barcode = "7801234500055", price = 150, brand = "MedSafe", unit = "Unidades"),
+
+                            ProductEntity("CAP-MED-001", "Paracetamol 500 mg", "Fármacos", 5, 10, "Estante B-4", "12/2026",
+                    barcode = "7801234500011", price = 3500, brand = "Laboratorio Chile", unit = "Cajas",
+                    indications = "Alivio del dolor leve a moderado y de la fiebre (dato ficticio de ejemplo).",
+                    dosage = "Adultos: 1 comprimido cada 6 a 8 horas (dato ficticio de ejemplo).",
+                    contraindications = "Hipersensibilidad al paracetamol. Insuficiencia hepática grave (dato ficticio de ejemplo)."),
                 )
                 samples.forEach { p ->
                     dao.insertProduct(p)
