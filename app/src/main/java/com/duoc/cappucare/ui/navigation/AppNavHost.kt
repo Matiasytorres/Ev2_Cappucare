@@ -219,6 +219,9 @@ fun AppNavHost(viewModel: CappucareViewModel) {
 
             composable(Routes.PROFILE) {
                 ProfileScreen(
+                    products      = products,
+                    movements     = movements,
+                    lowStockCount = lowStock.size,
                     onLogout = {
                         navController.navigate(Routes.LOGIN) {
                             popUpTo(navController.graph.id) { inclusive = true }
