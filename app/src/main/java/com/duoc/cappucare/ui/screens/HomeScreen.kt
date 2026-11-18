@@ -17,6 +17,10 @@ import androidx.compose.ui.unit.sp
 import com.duoc.cappucare.data.MovementEntity
 import com.duoc.cappucare.data.ProductEntity
 import com.duoc.cappucare.ui.theme.*
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.duoc.cappucare.viewmodel.HealthViewModel
+import com.duoc.cappucare.viewmodel.HealthUiState
+
 
 @Composable
 fun HomeScreen(
@@ -25,7 +29,8 @@ fun HomeScreen(
     movements: List<MovementEntity>,
     onNavigateToScan: () -> Unit,
     onNavigateToAdd: () -> Unit,
-    onNavigateToInventory: () -> Unit
+    onNavigateToInventory: () -> Unit,
+    healthViewModel: HealthViewModel = viewModel()
 ) {
     Column(
         modifier = Modifier
@@ -99,6 +104,64 @@ fun HomeScreen(
             Spacer(modifier = Modifier.width(8.dp))
             QuickActionButton("Inventario", Icons.Default.List, onNavigateToInventory, Modifier.weight(1f))
         }
+
+        val healthState by healthViewModel.uiState.collectAsState()
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Card(
+            shape = RoundedCornerShape(12.dp),
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        Icons.Default.Public,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        "Estado de Salud Global",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+
+                when (val state = healthState) {
+                    is HealthUiState.Loading -> {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .size(24.dp)
+                                .align(Alignment.CenterHorizontally)
+                        )
+                    }
+                    is HealthUiState.Success -> {
+                        val fmt = { n: Long ->
+                            String.format("%,d", n).replace(",", ".")
+                        }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            HealthStatItem("Casos", fmt(state.stats.cases), Color(0xFFE65100))
+                            HealthStatItem("Activos", fmt(state.stats.active), Color(0xFFF57C00))
+                            HealthStatItem("Recuperados", fmt(state.stats.recovered), Color(0xFF2E7D32))
+                            HealthStatItem("Fallecidos", fmt(state.stats.deaths), Color(0xFF616161))
+                        }
+                    }
+                    is HealthUiState.Error -> {
+                        Text(
+                            "Sin conexión a datos globales",
+                            fontSize = 12.sp,
+                            color = Color.Gray
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -147,4 +210,12 @@ fun HomeScreenPreview() {
         onNavigateToAdd = {},
         onNavigateToInventory = {}
     )
+}
+
+@Composable
+private fun HealthStatItem(label: String, value: String, color: Color) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(value, fontWeight = FontWeight.Bold, fontSize = 12.sp, color = color)
+        Text(label, fontSize = 10.sp, color = Color.Gray)
+    }
 }
