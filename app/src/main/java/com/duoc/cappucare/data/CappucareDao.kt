@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -38,6 +39,9 @@ interface CappucareDao {
 
     @Update
     suspend fun updateProduct(product: ProductEntity): Int
+
+    @Upsert
+    suspend fun upsertProduct(product: ProductEntity): Long
 
     @Delete
     suspend fun deleteProduct(product: ProductEntity): Int

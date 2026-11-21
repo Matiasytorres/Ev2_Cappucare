@@ -10,3 +10,8 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+# Retrofit / Gson (release con R8)
+-keep class com.duoc.cappucare.data.remote.** { *; }
+-keepattributes Signature
+-keepattributes *Annotation*
