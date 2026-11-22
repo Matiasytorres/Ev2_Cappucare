@@ -51,7 +51,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
         verticalArrangement = Arrangement.Center
     ) {
         Image(
-            painter = painterResource(id = R.drawable.logo_cappucare),
+            painter = painterResource(id = R.drawable.cappucarelogo),
             contentDescription = "Logo Cappucare",
             modifier = Modifier
                 .height(140.dp)

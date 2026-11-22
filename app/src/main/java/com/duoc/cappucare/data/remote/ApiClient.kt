@@ -11,8 +11,7 @@ object ApiClient {
      * Emulador Android -> PC anfitrión: 10.0.2.2
      * Dispositivo físico: IP local del PC (ej. http://192.168.1.50:8080/), en la misma red WiFi.
      */
-    const val BASE_URL = "http://localhost:8080/"
-
+    const val BASE_URL = "http://10.0.2.2:8080/"
     private val http = OkHttpClient.Builder()
         .connectTimeout(5, TimeUnit.SECONDS)
         .readTimeout(10, TimeUnit.SECONDS)

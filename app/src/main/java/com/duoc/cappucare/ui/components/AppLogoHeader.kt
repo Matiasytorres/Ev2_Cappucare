@@ -13,7 +13,7 @@ import com.duoc.cappucare.R
 @Composable
 fun AppLogoHeader(modifier: Modifier = Modifier) {
     Image(
-        painter = painterResource(id = R.drawable.logo_cappucare),
+        painter = painterResource(id = R.drawable.cappucarelogo),
         contentDescription = "Logo Cappucare",
         modifier = modifier
             .height(120.dp)
