@@ -198,14 +198,14 @@ Se define en `app/src/main/java/com/duoc/cappucare/data/remote/ApiClient.kt`:
 
 ## 🌍 Consumo de API externa (Retrofit)
 
-Además del microservicio propio, la aplicación consume una API externa independiente mediante Retrofit (`RetrofitInstance.kt` y `HealthApiService.kt`) para obtener información estadística global de salud sin interferir con los datos locales ni el inventario:
+Además del microservicio propio, la aplicación consume la API pública **Disease.sh** mediante Retrofit (`RetrofitInstance.kt` y `HealthApiService.kt`) para obtener estadísticas globales de salud (`GlobalHealthStats`) sin interferir con los datos locales ni el inventario:
 
-* **URL Base:** `<PEGAR_AQUÍ_LA_BASE_URL_DE_RetrofitInstance.kt>`
+* **URL Base:** `https://disease.sh/`
 * **Endpoint utilizado:**
 
 | Método | Ruta | Descripción | Respuesta |
 | :--- | :--- | :--- | :--- |
-| `GET` | `<PEGAR_AQUÍ_LA_RUTA_DE_HealthApiService.kt>` | Obtiene estadísticas globales de salud (`GlobalHealthStats`) | `200 OK` |
+| `GET` | `v3/covid-19/all` | Obtiene estadísticas globales de salud (`GlobalHealthStats`) | `200 OK` |
 
 ---
 
@@ -289,3 +289,7 @@ El ejecutable de producción fue generado y firmado digitalmente mediante Androi
 * **Tablero Trello:** [Tablero Ev2 - Cappucare](https://trello.com/invite/b/6ad6744c26adca991b561b84/ATTI5ddc038ea35f1a01550a2a48796b7c26AFA2611F/ev2cappucare) (planificación distribuida: *Por hacer · En curso · Finalizado*)
 
 ---
+
+## 📄 Licencia y uso
+
+Proyecto con fines exclusivamente académicos. Todos los datos son ficticios o anonimizados y la aplicación no está destinada a publicación ni a uso en producción.
